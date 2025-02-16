@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Appointment Booker</string>
+    <string name="login_title">Bejelentkezés</string>
+    <string name="signup_title">Regisztráció</string>
+    <string name="first_name_title">Keresztnév</string>
+    <string name="last_name_title">Vezetéknév</string>
+    <string name="password_title">Jelszó</string>
+    <string name="password_confirmation_title">Jelszó megerősítés</string>
+    <string name="login_btn_title">Bejelentkezés</string>
+    <string name="signup_btn_title">Regisztráció</string>
+    <string name="login_head_text">Jelentkezzen be, hogy tudjon foglalni időpontot fodrászhoz</string>
+</resources>

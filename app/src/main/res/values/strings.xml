@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">AppTemp</string>
+    <string name="app_name">Appointment Booker</string>
+    <string name="login_title">Login</string>
+    <string name="signup_title">Registration</string>
+    <string name="email_title" translatable="false">Email</string>
+    <string name="first_name_title">First Name</string>
+    <string name="last_name_title">Last Name</string>
+    <string name="password_title">Password</string>
+    <string name="password_confirmation_title">Password confirmation</string>
+    <string name="login_btn_title">Login</string>
+    <string name="signup_btn_title">Sign Up</string>
+    <string name="login_head_text">Log in for book a hair appointment</string>
 </resources>

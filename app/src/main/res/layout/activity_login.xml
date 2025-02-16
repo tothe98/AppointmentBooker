@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="547dp"
+        tools:context=".LoginActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/login_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/lavender"
+                android:longClickable="false"
+                android:theme="@style/MaterialAlertDialog.Material3"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:logo="@drawable/ic_launcher_foreground"
+                app:logoDescription="Appointment Booker"
+                app:subtitle="@string/login_title"
+                app:subtitleTextColor="@color/white"
+                app:title="Appointment Booker"
+                app:titleTextColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@android:style/Widget.Holo.TextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/login_head_text"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/emailTxtField"
+                    style="@style/Theme.AppCompat.DayNight.NoActionBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/lavender_border"
+                    android:drawableStart="@drawable/baseline_email_24"
+                    android:drawablePadding="5dp"
+                    android:ems="10"
+                    android:hint="@string/email_title"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="10dp" />
+
+                <EditText
+                    android:id="@+id/passwordTxtField"
+                    style="@style/Theme.AppCompat.DayNight.NoActionBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/lavender_border"
+                    android:drawableStart="@drawable/baseline_password_24"
+                    android:drawablePadding="5dp"
+                    android:ems="10"
+                    android:hint="@string/password_title"
+                    android:inputType="text|textPassword"
+                    android:paddingStart="10dp" />
+
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="100dp"
+                    android:layout_marginEnd="100dp"
+                    android:text="@string/login_btn_title" />
+            </LinearLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
