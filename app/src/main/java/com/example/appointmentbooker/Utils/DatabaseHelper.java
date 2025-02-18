@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS users(last_name TEXT, first_name TEXT, email TEXT PRIMARY KEY, password TEXT, role INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS users(last_name TEXT, first_name TEXT, email TEXT PRIMARY KEY, password TEXT, phone TEXT, role INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS appointments(start_datetime TEXT PRIMARY KEY, period INTEGER, end_datetime TEXT, title TEXT, booked_email TEXT, service_name TEXT)");
     }
 
@@ -49,9 +49,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("email", user.getEmail());
         String hashedPass = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
         values.put("password", hashedPass);
-        values.put("role", Integer.parseInt(user.getRole().name()));
-        long result = db.insert("users", null, values);
-        return result != -1;
+        values.put("phone", user.getPhone());
+        values.put("role", 1);
+        try {
+            long result = db.insert("users", null, values);
+            return result != -1;
+        } catch (Exception e){
+            return false;
+        }
+
     }
 
     public Boolean login(LoginUserModel user) {

@@ -10,4 +10,14 @@
     <string name="login_btn_title">Bejelentkezés</string>
     <string name="signup_btn_title">Regisztráció</string>
     <string name="login_head_text">Jelentkezzen be, hogy tudjon foglalni időpontot fodrászhoz</string>
+    <string name="all_fields_required_msg">Minden mezőt ki kell tölteni!</string>
+    <string name="wrong_email_or_password_msg">Rossz email vagy jelszó!</string>
+    <string name="forget_password_title">Elfelejtett jelszó</string>
+    <string name="no_registered_title">Nincs még fiókod?</string>
+    <string name="phone_title">Telefon</string>
+    <string name="registered_title">Van már fiókod?</string>
+    <string name="two_passwords_arent_same_msg">Két jelszó nem egyezik!</string>
+    <string name="user_exists_msg">Ezzel az email-lel már regisztráltak!</string>
+    <string name="signup_error">Hiba történt!</string>
+    <string name="signup_successful">Sikeres regisztráció!</string>
 </resources>

@@ -10,4 +10,14 @@
     <string name="login_btn_title">Login</string>
     <string name="signup_btn_title">Sign Up</string>
     <string name="login_head_text">Log in for book a hair appointment</string>
+    <string name="all_fields_required_msg">All fields are required!</string>
+    <string name="wrong_email_or_password_msg">Email or password is wrong!</string>
+    <string name="forget_password_title">Forget Password</string>
+    <string name="no_registered_title">Don\'t have account?</string>
+    <string name="phone_title">Phone</string>
+    <string name="registered_title">You have account?</string>
+    <string name="two_passwords_arent_same_msg">Two passwords aren\'t same!</string>
+    <string name="user_exists_msg">This email already exits!</string>
+    <string name="signup_error">Error!</string>
+    <string name="signup_successful">Successful registration!</string>
 </resources>

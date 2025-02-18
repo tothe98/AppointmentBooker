@@ -6,15 +6,25 @@ public class SignupUserModel {
     private String email;
     private  String password;
     private  String passwordConfirm;
+    private String phone;
     private Role role;
 
-    public SignupUserModel(String firstName, Role role, String lastName, String email, String password, String passwordConfirm) {
+    public SignupUserModel(String firstName, String lastName, String email, String phone, String password, String passwordConfirm) {
         this.firstName = firstName;
-        this.role = role;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.passwordConfirm = passwordConfirm;
+        this.phone = phone;
+        this.role = Role.User;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getFirstName() {
