@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/appointments_tab"
+        android:icon="@drawable/outline_view_timeline_24"
+        android:title="@string/nav_bar_appointments_title" />
+    <item
+        android:id="@+id/booked_appointments_tab"
+        android:icon="@drawable/appointment"
+        android:title="@string/nav_bar_booked_appointments" />
+    <item
+        android:id="@+id/account_tab"
+        android:icon="@drawable/baseline_account_box_24"
+        android:title="@string/nav_bar_account_title" />
+    <item
+        android:id="@+id/contact_tab"
+        android:icon="@drawable/contact_information"
+        android:title="@string/nav_bar_contact_title" />
+</menu>

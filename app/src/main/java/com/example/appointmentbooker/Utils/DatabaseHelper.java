@@ -3,6 +3,7 @@ package com.example.appointmentbooker.Utils;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -60,16 +61,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public Boolean login(LoginUserModel user) {
+    public int[] login(LoginUserModel user) {
         SQLiteDatabase db = this.getWritableDatabase();
-        try (Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{user.getEmail()})) {
+        Cursor cursor = null;
+        int[] resultArray = new int[2];
+        resultArray[0] = 0;
+        resultArray[1] = 0;
+        try {
+            cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{user.getEmail()});
             if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
                 int passwordColumnIndex = cursor.getColumnIndex("password");
                 String hashedPassword = cursor.getString(passwordColumnIndex);
+                System.out.println(passwordColumnIndex);
                 BCrypt.Result result = BCrypt.verifyer().verify(user.getPassword().toCharArray(), hashedPassword);
-                return result.verified;
+                resultArray[0] = result.verified==true?1:0;
+                resultArray[1] = cursor.getInt((int)cursor.getColumnIndex("role"));
+                return resultArray;
             }
-            return false;
+            return resultArray;
+        } finally {
+            cursor.close();
         }
     }
 

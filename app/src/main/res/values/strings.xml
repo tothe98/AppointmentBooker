@@ -20,4 +20,11 @@
     <string name="user_exists_msg">This email already exits!</string>
     <string name="signup_error">Error!</string>
     <string name="signup_successful">Successful registration!</string>
+    <string name="home_title">Home</string>
+    <string name="nav_bar_appointments_title">Appointments</string>
+    <string name="nav_bar_booked_appointments">Booked Appointments</string>
+    <string name="nav_bar_account_title">Account</string>
+    <string name="nav_bar_contact_title">Contact</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

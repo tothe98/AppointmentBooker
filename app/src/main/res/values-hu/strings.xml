@@ -20,4 +20,9 @@
     <string name="user_exists_msg">Ezzel az email-lel már regisztráltak!</string>
     <string name="signup_error">Hiba történt!</string>
     <string name="signup_successful">Sikeres regisztráció!</string>
+    <string name="home_title">Főoldal</string>
+    <string name="nav_bar_appointments_title">Időpontok</string>
+    <string name="nav_bar_booked_appointments">Lefoglalt időpontok</string>
+    <string name="nav_bar_account_title">Fiók</string>
+    <string name="nav_bar_contact_title">Kapcsolat</string>
 </resources>

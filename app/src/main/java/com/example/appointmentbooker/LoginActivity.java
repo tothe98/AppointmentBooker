@@ -46,10 +46,17 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(emailTxt.getText().toString().isEmpty() || passwordTxt.getText().toString().isEmpty()){
+                if (emailTxt.getText().toString().isEmpty() || passwordTxt.getText().toString().isEmpty()) {
                     Toast.makeText(LoginActivity.this, R.string.all_fields_required_msg, Toast.LENGTH_SHORT).show();
                 } else {
-                    if(db.login(new LoginUserModel(emailTxt.getText().toString(), passwordTxt.getText().toString()))){
+                    int[] result = db.login(new LoginUserModel(emailTxt.getText().toString(), passwordTxt.getText().toString()));
+                    if (result[0] == 1) {
+                        if(result[1] == 1){
+                            Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            i.addCategory(Intent.CATEGORY_HOME);
+                            startActivity(i);
+                        }
                         Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(LoginActivity.this, R.string.wrong_email_or_password_msg, Toast.LENGTH_SHORT).show();
@@ -73,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Nincs még kész az activity", Toast.LENGTH_SHORT).show();
             }
         });
-
 
 
     }
