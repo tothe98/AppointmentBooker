@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.example.appointmentbooker.Models.Appointment;
 import com.example.appointmentbooker.Models.LoginUserModel;
 import com.example.appointmentbooker.Models.SignupUserModel;
+import com.example.appointmentbooker.Models.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS users(last_name TEXT, first_name TEXT, email TEXT PRIMARY KEY, password TEXT, phone TEXT, role INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS user_image(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, image BLOB)");
         db.execSQL("CREATE TABLE IF NOT EXISTS appointments(start_datetime TEXT PRIMARY KEY, period INTEGER, end_datetime TEXT, title TEXT, booked_email TEXT, service_name TEXT)");
     }
 
@@ -73,7 +75,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
                 int passwordColumnIndex = cursor.getColumnIndex("password");
                 String hashedPassword = cursor.getString(passwordColumnIndex);
-                System.out.println(passwordColumnIndex);
                 BCrypt.Result result = BCrypt.verifyer().verify(user.getPassword().toCharArray(), hashedPassword);
                 resultArray[0] = result.verified==true?1:0;
                 resultArray[1] = cursor.getInt((int)cursor.getColumnIndex("role"));
@@ -85,12 +86,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Check user exits
-     *
-     * @param email
-     * @return Boolean true if user exists, false if user does not exist
-     */
     public Boolean checkUserExists(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         try (Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{email})) {
@@ -100,6 +95,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return false;
+    }
+    public Boolean checkPictureExists(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try (Cursor cursor = db.rawQuery("SELECT * FROM user_image WHERE email = ?", new String[]{email})) {
+
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public User getUserInfo(String email){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        User u = new User();
+        try {
+            cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{email});
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                u.setEmail(email);
+                u.setFirstName(cursor.getString((int)cursor.getColumnIndex("first_name")));
+                u.setLastName(cursor.getString((int)cursor.getColumnIndex("last_name")));
+                u.setPhone(cursor.getString((int)cursor.getColumnIndex("phone")));
+                u.setPassword("");
+                return u;
+            }
+            return u;
+        } finally {
+            cursor.close();
+        }
+    }
+
+    public boolean updateUserInfo(User user){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("first_name", user.getFirstName());
+        values.put("last_name", user.getLastName());
+        values.put("phone", user.getPhone());
+        int result = db.update("users", values, "email" + "=?", new String[]{user.getEmail()});
+        db.close();
+        return result != -1;
+    }
+
+    public boolean addProfilePicture(String email, byte[] image){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("email", email);
+        values.put("image", image);
+        if(checkPictureExists(email)){
+            int result = db.update("user_image", values, "email" + "=?", new String[]{email});
+            return result != -1;
+        }
+        long result = db.insert("user_image", null, values);
+        db.close();
+        return result!= -1;
+    }
+
+    public byte[] getProfilePicture(String email){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        byte[] imageByte = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM user_image WHERE email = ?", new String[]{email});
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                imageByte = cursor.getBlob((int)cursor.getColumnIndex("image"));
+                return imageByte;
+            }
+            return imageByte;
+        } finally {
+            cursor.close();
+        }
     }
 
     //Appointment

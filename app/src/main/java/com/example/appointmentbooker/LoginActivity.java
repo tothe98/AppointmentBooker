@@ -1,6 +1,7 @@
 package com.example.appointmentbooker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,10 +20,10 @@ import com.example.appointmentbooker.Utils.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static final String SHARED_PREFS = "sharedPrefs";
     EditText emailTxt, passwordTxt;
     Button loginBtn;
     TextView forgotTxt, noaccTxt;
-
     DatabaseHelper db;
 
     @Override
@@ -35,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        isLogged();
 
         emailTxt = findViewById(R.id.emailTxtField);
         passwordTxt = findViewById(R.id.passwordTxtField);
@@ -52,6 +55,11 @@ public class LoginActivity extends AppCompatActivity {
                     int[] result = db.login(new LoginUserModel(emailTxt.getText().toString(), passwordTxt.getText().toString()));
                     if (result[0] == 1) {
                         if(result[1] == 1){
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("isLogged", "true");
+                            editor.putString("email", emailTxt.getText().toString());
+                            editor.apply();
                             Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             i.addCategory(Intent.CATEGORY_HOME);
@@ -80,7 +88,16 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Nincs még kész az activity", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-
+    private void isLogged(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String check = sharedPreferences.getString("isLogged", "");
+        if(check.equals("true")){
+            Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
+        }
     }
 }

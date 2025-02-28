@@ -25,6 +25,11 @@
     <string name="nav_bar_booked_appointments">Booked Appointments</string>
     <string name="nav_bar_account_title">Account</string>
     <string name="nav_bar_contact_title">Contact</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save_btn_title">Save</string>
+    <string name="successful_save_userinfo">Successful update!</string>
+    <string name="unsuccessful_save_userinfo">Unsuccessful update!</string>
+    <string name="user_data_page">User data</string>
+    <string name="successful_upload_picture">Successful upload profile image!</string>
+    <string name="unsuccessful_upload_picture">Unsuccessful upload profile image!</string>
+    <string name="logout_btn">Logout</string>
 </resources>

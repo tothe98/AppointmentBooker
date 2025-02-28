@@ -25,4 +25,11 @@
     <string name="nav_bar_booked_appointments">Lefoglalt időpontok</string>
     <string name="nav_bar_account_title">Fiók</string>
     <string name="nav_bar_contact_title">Kapcsolat</string>
+    <string name="save_btn_title">Mentés</string>
+    <string name="successful_save_userinfo">Sikeres mentés!</string>
+    <string name="unsuccessful_save_userinfo">Sikertelen mentés!</string>
+    <string name="user_data_page">Felhasználói adatok</string>
+    <string name="successful_upload_picture">Sikeres porfilkép hozzáadás!</string>
+    <string name="unsuccessful_upload_picture">Sikertelen profilkép hozzáadás!</string>
+    <string name="logout_btn">Kilépés</string>
 </resources>
