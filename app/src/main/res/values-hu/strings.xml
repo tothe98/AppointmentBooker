@@ -32,4 +32,8 @@
     <string name="successful_upload_picture">Sikeres porfilkép hozzáadás!</string>
     <string name="unsuccessful_upload_picture">Sikertelen profilkép hozzáadás!</string>
     <string name="logout_btn">Kilépés</string>
+    <string name="appointments_title">Időpontok</string>
+    <string name="book_btn">Foglalás</string>
+    <string name="cancle_btn">Mégsem</string>
+    <string name="choose_service">Válassz szolgáltatást</string>
 </resources>

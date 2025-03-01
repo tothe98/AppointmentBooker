@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.appointmentbooker.Models.Appointment;
 import com.example.appointmentbooker.Models.LoginUserModel;
+import com.example.appointmentbooker.Models.ServiceType;
 import com.example.appointmentbooker.Models.SignupUserModel;
 import com.example.appointmentbooker.Models.User;
 
@@ -33,13 +34,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS users(last_name TEXT, first_name TEXT, email TEXT PRIMARY KEY, password TEXT, phone TEXT, role INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS user_image(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, image BLOB)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS appointments(start_datetime TEXT PRIMARY KEY, period INTEGER, end_datetime TEXT, title TEXT, booked_email TEXT, service_name TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS appointments(id INTEGER PRIMARY KEY AUTOINCREMENT, datetime TEXT, period INTEGER, booked_email TEXT, service_type TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS service_types(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, period INTEGER)");
+        db.execSQL("INSERT INTO service_types (name, period) VALUES ('Férfi hajvágás', 25)");
+        db.execSQL("INSERT INTO service_types (name, period) VALUES ('Női hajvágás', 45)");
+        db.execSQL("INSERT INTO service_types (name, period) VALUES ('Hajfestés', 60)");
+        db.execSQL("INSERT INTO service_types (name, period) VALUES ('Hajmosás', 10)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS users");
         db.execSQL("DROP TABLE IF EXISTS appointments");
+        db.execSQL("DROP TABLE IF EXISTS service_types");
+        db.execSQL("DROP TABLE IF EXISTS user_image");
     }
 
 
@@ -57,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             long result = db.insert("users", null, values);
             return result != -1;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
@@ -76,8 +84,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int passwordColumnIndex = cursor.getColumnIndex("password");
                 String hashedPassword = cursor.getString(passwordColumnIndex);
                 BCrypt.Result result = BCrypt.verifyer().verify(user.getPassword().toCharArray(), hashedPassword);
-                resultArray[0] = result.verified==true?1:0;
-                resultArray[1] = cursor.getInt((int)cursor.getColumnIndex("role"));
+                resultArray[0] = result.verified == true ? 1 : 0;
+                resultArray[1] = cursor.getInt((int) cursor.getColumnIndex("role"));
                 return resultArray;
             }
             return resultArray;
@@ -96,6 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return false;
     }
+
     public Boolean checkPictureExists(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         try (Cursor cursor = db.rawQuery("SELECT * FROM user_image WHERE email = ?", new String[]{email})) {
@@ -107,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public User getUserInfo(String email){
+    public User getUserInfo(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
         User u = new User();
@@ -116,9 +125,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 u.setEmail(email);
-                u.setFirstName(cursor.getString((int)cursor.getColumnIndex("first_name")));
-                u.setLastName(cursor.getString((int)cursor.getColumnIndex("last_name")));
-                u.setPhone(cursor.getString((int)cursor.getColumnIndex("phone")));
+                u.setFirstName(cursor.getString((int) cursor.getColumnIndex("first_name")));
+                u.setLastName(cursor.getString((int) cursor.getColumnIndex("last_name")));
+                u.setPhone(cursor.getString((int) cursor.getColumnIndex("phone")));
                 u.setPassword("");
                 return u;
             }
@@ -128,7 +137,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateUserInfo(User user){
+    public boolean updateUserInfo(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("first_name", user.getFirstName());
@@ -139,21 +148,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public boolean addProfilePicture(String email, byte[] image){
+    public boolean addProfilePicture(String email, byte[] image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("email", email);
         values.put("image", image);
-        if(checkPictureExists(email)){
+        if (checkPictureExists(email)) {
             int result = db.update("user_image", values, "email" + "=?", new String[]{email});
             return result != -1;
         }
         long result = db.insert("user_image", null, values);
         db.close();
-        return result!= -1;
+        return result != -1;
     }
 
-    public byte[] getProfilePicture(String email){
+    public byte[] getProfilePicture(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
         byte[] imageByte = null;
@@ -161,7 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor = db.rawQuery("SELECT * FROM user_image WHERE email = ?", new String[]{email});
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                imageByte = cursor.getBlob((int)cursor.getColumnIndex("image"));
+                imageByte = cursor.getBlob((int) cursor.getColumnIndex("image"));
                 return imageByte;
             }
             return imageByte;
@@ -170,27 +179,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    //Appointment
+    //Appointment database manipulation
     public Boolean addAppointment(Appointment appointment) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("start_datetime", appointment.getStartDatetime());
+        values.put("datetime", appointment.getDatetime());
         values.put("period", appointment.getPeriod());
-        values.put("end_datetime", appointment.getEndDatetime());
-        values.put("title", appointment.getTitle());
-        values.put("booked_email", appointment.getBookedEmail());
-        values.put("service_name", appointment.getServiceName());
 
         long result = db.insert("appointments", null, values);
         return result != -1;
     }
 
-    public Boolean bookAppointment(Date startDatetime, String email) {
+    public Boolean bookAppointment(int id, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("booked_email", email);
-        long result = db.update("appointments", values, "start_datetime", new String[]{startDatetime.toString()});
+        long result = db.update("appointments", values, "id", new String[]{("" + id)});
         return result != -1;
+    }
+
+    public List<ServiceType> listServiceTypes(int period){
+        List<ServiceType> serviceTypes = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM service_types WHERE period <= ?", new String[]{""+period});
+            if (cursor != null) {
+                if (cursor.moveToFirst()) do {
+                    ServiceType serviceType = new ServiceType();
+                    serviceType.setId(cursor.getInt((int) cursor.getColumnIndex("id")));
+                    serviceType.setName(cursor.getString((int) cursor.getColumnIndex("name")));
+                    serviceType.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
+                    serviceTypes.add(serviceType);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            db.endTransaction();
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return serviceTypes;
     }
 
 
@@ -204,13 +234,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor != null) {
                 if (cursor.moveToFirst()) do {
                     Appointment appointment = new Appointment();
-                    appointment.setStartDatetime(cursor.getString((int)cursor.getColumnIndex("start_datetime")));
-                    appointment.setPeriod(cursor.getInt((int)cursor.getColumnIndex("period")));
-                    appointment.setEndDatetime(cursor.getString((int)cursor.getColumnIndex("end_datetime")));
-                    appointment.setTitle(cursor.getString((int)cursor.getColumnIndex("title")));
-                    appointment.setBookedEmail(cursor.getString((int)cursor.getColumnIndex("booked_email")));
-                    appointment.setServiceName(cursor.getString((int)cursor.getColumnIndex("service_name")));
-                    appointments.add(appointment);
+                    appointment.setId(cursor.getInt((int) cursor.getColumnIndex("id")));
+                    appointment.setDatetime(cursor.getString((int) cursor.getColumnIndex("datetime")));
+                    appointment.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
+                    appointment.setBookedEmail(cursor.getString((int) cursor.getColumnIndex("booked_email")));
+                    appointment.setServiceType(cursor.getString((int) cursor.getColumnIndex("service_type")));
+                    if (appointment.getBookedEmail().isEmpty()) {
+                        appointments.add(appointment);
+                    }
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -229,18 +260,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             cursor = db.rawQuery("SELECT * FROM appointments WHERE ? = ?", new String[]{col, data});
-            if(cursor!=null){
-                if(cursor.moveToFirst()) {
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
                     do {
                         Appointment appointment = new Appointment();
-                        appointment.setStartDatetime(cursor.getString((int)cursor.getColumnIndex("start_datetime")));
-                        appointment.setPeriod(cursor.getInt((int)cursor.getColumnIndex("period")));
-                        appointment.setEndDatetime(cursor.getString((int)cursor.getColumnIndex("end_datetime")));
-                        appointment.setTitle(cursor.getString((int)cursor.getColumnIndex("title")));
-                        appointment.setBookedEmail(cursor.getString((int)cursor.getColumnIndex("booked_email")));
-                        appointment.setServiceName(cursor.getString((int)cursor.getColumnIndex("service_name")));
+                        appointment.setId(cursor.getInt((int) cursor.getColumnIndex("id")));
+                        appointment.setDatetime(cursor.getString((int) cursor.getColumnIndex("datetime")));
+                        appointment.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
+                        appointment.setBookedEmail(cursor.getString((int) cursor.getColumnIndex("booked_email")));
+                        appointment.setServiceType(cursor.getString((int) cursor.getColumnIndex("service_type")));
                         appointments.add(appointment);
-                    }while (cursor.moveToNext());
+                        appointments.add(appointment);
+                    } while (cursor.moveToNext());
                 }
             }
         } finally {

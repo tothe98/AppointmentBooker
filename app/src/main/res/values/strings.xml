@@ -32,4 +32,8 @@
     <string name="successful_upload_picture">Successful upload profile image!</string>
     <string name="unsuccessful_upload_picture">Unsuccessful upload profile image!</string>
     <string name="logout_btn">Logout</string>
+    <string name="appointments_title">Appointments</string>
+    <string name="book_btn">Book</string>
+    <string name="cancle_btn">Cancel</string>
+    <string name="choose_service">Choose service</string>
 </resources>

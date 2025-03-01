@@ -3,55 +3,44 @@ package com.example.appointmentbooker.Models;
 import java.util.Date;
 
 public class Appointment {
-    private String startDatetime;
+    private int Id;
+    private String datetime;
     private int period; //minutes
-    private String endDatetime;
-    private String title;
     private String bookedEmail;
-    private String serviceName;
+    private String serviceType;
 
     public Appointment() {
     }
 
-    public Appointment(String startDatetime, int period, String endPeriod, String title) {
-        this.startDatetime = startDatetime;
+    public Appointment(String datetime, int period) {
+        this.datetime = datetime;
         this.period = period;
-        this.endDatetime = endPeriod;
-        this.title = title;
         this.bookedEmail = null;
-        this.serviceName = null;
+        this.serviceType = null;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public Appointment(int id, String datetime, int period) {
+        Id = id;
+        this.datetime = datetime;
+        this.period = period;
+        this.bookedEmail = null;
+        this.serviceType = null;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public int getId() {
+        return Id;
     }
 
-    public String getBookedEmail() {
-        return bookedEmail;
+    public void setId(int id) {
+        Id = id;
     }
 
-    public void setBookedEmail(String bookedEmail) {
-        this.bookedEmail = bookedEmail;
+    public String getDatetime() {
+        return datetime;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getEndDatetime() {
-        return endDatetime;
-    }
-
-    public void setEndDatetime(String endDatetime) {
-        this.endDatetime = endDatetime;
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
     }
 
     public int getPeriod() {
@@ -62,11 +51,19 @@ public class Appointment {
         this.period = period;
     }
 
-    public String getStartDatetime() {
-        return startDatetime;
+    public String getBookedEmail() {
+        return bookedEmail;
     }
 
-    public void setStartDatetime(String startDatetime) {
-        this.startDatetime = startDatetime;
+    public void setBookedEmail(String booked_email) {
+        this.bookedEmail = booked_email;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String service_type) {
+        this.serviceType = service_type;
     }
 }
