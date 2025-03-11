@@ -36,4 +36,8 @@
     <string name="book_btn">Book</string>
     <string name="cancle_btn">Cancel</string>
     <string name="choose_service">Choose service</string>
+    <string name="contact_information_title">Contact</string>
+    <string name="contact_phone_title">Phone:</string>
+    <string name="contact_email_title" translatable="false">Email:</string>
+    <string name="contact_address_title">Address:</string>
 </resources>

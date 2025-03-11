@@ -36,4 +36,7 @@
     <string name="book_btn">Foglalás</string>
     <string name="cancle_btn">Mégsem</string>
     <string name="choose_service">Válassz szolgáltatást</string>
+    <string name="contact_information_title">Elérhetőségek</string>
+    <string name="contact_phone_title">Telefonszám:</string>
+    <string name="contact_address_title">Cím:</string>
 </resources>

@@ -1,12 +1,17 @@
 package com.example.appointmentbooker;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +28,8 @@ public class ContactFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    TextView phoneTxt, emailTxt, addressTxt;
 
     public ContactFragment() {
         // Required empty public constructor
@@ -60,5 +67,44 @@ public class ContactFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_contact, container, false);
+    }
+
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        phoneTxt = view.findViewById(R.id.phoneTxt);
+        emailTxt = view.findViewById(R.id.emailTxt);
+        addressTxt = view.findViewById(R.id.addressTxt);
+
+        phoneTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String number = phoneTxt.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+number));
+                startActivity(intent);
+            }
+        });
+        emailTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mail = emailTxt.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"+mail));
+                startActivity(intent);
+            }
+        });
+
+        addressTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String address = addressTxt.getText().toString();
+                String geoUri = "http://maps.google.com/maps?q=" + address;
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(geoUri));
+                startActivity(intent);
+            }
+        });
+
+
     }
 }
