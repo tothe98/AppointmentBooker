@@ -16,16 +16,11 @@ import com.example.appointmentbooker.Models.Appointment;
 import com.example.appointmentbooker.Models.ServiceType;
 import com.example.appointmentbooker.R;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class CustomAdapter extends ArrayAdapter<Appointment> implements View.OnClickListener {
+public class CustomUserAdapter extends ArrayAdapter<Appointment> implements View.OnClickListener {
 
     private ArrayList<Appointment> dataSet;
     Context mContext;
@@ -35,7 +30,7 @@ public class CustomAdapter extends ArrayAdapter<Appointment> implements View.OnC
         TextView txtDate, txtTime, txtPeriod, btnBook;
     }
 
-    public CustomAdapter(ArrayList<Appointment> data, Context context, Dialog d) {
+    public CustomUserAdapter(ArrayList<Appointment> data, Context context, Dialog d) {
         super(context, R.layout.row_item, data);
         this.dataSet = data;
         this.mContext = context;

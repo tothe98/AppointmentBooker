@@ -40,4 +40,28 @@
     <string name="contact_phone_title">Phone:</string>
     <string name="contact_email_title" translatable="false">Email:</string>
     <string name="contact_address_title">Address:</string>
+    <string name="add_new_appointment">New appointment</string>
+    <string name="add_appointment_title">Add Appointment</string>
+    <string name="date_title">Date</string>
+    <string name="period_title">Period</string>
+    <string name="add_btn">Add</string>
+    <string name="set_btn">Set</string>
+    <string name="successful_add">Successful addition</string>
+    <string name="failed_add">Failed to add</string>
+    <string name="wrong_date">The specified date is older than the current date!</string>
+    <string name="appointment_exists">There is already an appointment for this time.</string>
+    <string name="booking_btn">Booking</string>
+    <string name="delete_btn_title">Delete</string>
+    <string name="view_btn_title">View</string>
+    <string name="information_title">Information</string>
+    <string name="info_name_title">Name:</string>
+    <string name="info_phone_title">Phone:</string>
+    <string name="info_email_title" translatable="false">Email:</string>
+    <string name="deletion_confirm_title">Are you sure you want to cancel the appointment?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="deletion_title">Deletion</string>
+    <string name="successful_deletion">Successful deletion</string>
+    <string name="unsuccessful_deletion">Failed to delete</string>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

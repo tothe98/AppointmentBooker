@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.appointmentbooker.Models.Appointment;
 import com.example.appointmentbooker.Models.LoginUserModel;
+import com.example.appointmentbooker.Models.Role;
 import com.example.appointmentbooker.Models.ServiceType;
 import com.example.appointmentbooker.Models.SignupUserModel;
 import com.example.appointmentbooker.Models.User;
@@ -61,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String hashedPass = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
         values.put("password", hashedPass);
         values.put("phone", user.getPhone());
-        values.put("role", 1);
+        values.put("role", Role.User.getRole());
         try {
             long result = db.insert("users", null, values);
             return result != -1;
@@ -190,21 +191,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public Boolean bookAppointment(int id, String email) {
+    public Boolean checkExistsAppointment(String datetime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try (Cursor cursor = db.rawQuery("SELECT * FROM appointments WHERE datetime = ?", new String[]{datetime})) {
+
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean bookAppointment(int id, String email, String serviceType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("booked_email", email);
-        long result = db.update("appointments", values, "id", new String[]{("" + id)});
+        values.put("service_type", serviceType);
+        long result = db.update("appointments", values, "id=?", new String[]{(String.valueOf(id))});
         return result != -1;
     }
 
-    public List<ServiceType> listServiceTypes(int period){
+    public List<ServiceType> listServiceTypes(int period) {
         List<ServiceType> serviceTypes = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT * FROM service_types WHERE period <= ?", new String[]{""+period});
+            cursor = db.rawQuery("SELECT * FROM service_types WHERE period <= ?", new String[]{"" + period});
             if (cursor != null) {
                 if (cursor.moveToFirst()) do {
                     ServiceType serviceType = new ServiceType();
@@ -239,7 +252,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     appointment.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
                     appointment.setBookedEmail(cursor.getString((int) cursor.getColumnIndex("booked_email")));
                     appointment.setServiceType(cursor.getString((int) cursor.getColumnIndex("service_type")));
-                    if (appointment.getBookedEmail().isEmpty()) {
+                    if (appointment.getBookedEmail() == null || appointment.getBookedEmail().isEmpty()) {
+                        appointments.add(appointment);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            db.endTransaction();
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return appointments;
+    }
+
+    public List<Appointment> listAdminAppointments() {
+        List<Appointment> appointments = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM appointments", new String[]{});
+            if (cursor != null) {
+                if (cursor.moveToFirst()) do {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(cursor.getInt((int) cursor.getColumnIndex("id")));
+                    appointment.setDatetime(cursor.getString((int) cursor.getColumnIndex("datetime")));
+                    appointment.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
+                    appointment.setBookedEmail(cursor.getString((int) cursor.getColumnIndex("booked_email")));
+                    appointment.setServiceType(cursor.getString((int) cursor.getColumnIndex("service_type")));
+                    Date date = DateHelper.AddMinutesToDate(DateHelper.StringToDate(appointment.getDatetime()), -40);
+                    System.out.println(appointment.getDatetime());
+                    System.out.println(date);
+                    if (!DateHelper.BeforeCheck(date)) {
                         appointments.add(appointment);
                     }
                 } while (cursor.moveToNext());
@@ -281,6 +326,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return appointments;
+    }
+
+    public boolean deleteAppointment(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete("appointments", "id=?", new String[]{String.valueOf(id)});
+        return result != -1;
     }
 
 

@@ -39,4 +39,26 @@
     <string name="contact_information_title">Elérhetőségek</string>
     <string name="contact_phone_title">Telefonszám:</string>
     <string name="contact_address_title">Cím:</string>
+    <string name="add_new_appointment">Új időpont</string>
+    <string name="add_appointment_title">Új időpont hozzáadás</string>
+    <string name="date_title">Dátum</string>
+    <string name="period_title">Periódus</string>
+    <string name="add_btn">Hozzáadás</string>
+    <string name="set_btn">Beállít</string>
+    <string name="successful_add">Sikeres hozzáadás</string>
+    <string name="failed_add">Sikertelen hozzáadás</string>
+    <string name="wrong_date">A megadott dátum régebbi mint a jelenlegi!</string>
+    <string name="appointment_exists">Erre az időre már van időpont.</string>
+    <string name="booking_btn">Foglalás</string>
+    <string name="delete_btn_title">Törlés</string>
+    <string name="view_btn_title">Megnézés</string>
+    <string name="information_title">Információ</string>
+    <string name="info_name_title">Név:</string>
+    <string name="info_phone_title">Telefonszám:</string>
+    <string name="deletion_confirm_title">"Biztosan törölni szeretnéd az időpontot? "</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="deletion_title">Törlés</string>
+    <string name="successful_deletion">Sikeres törlés</string>
+    <string name="unsuccessful_deletion">Sikertelen törlés</string>
 </resources>
