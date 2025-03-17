@@ -30,6 +30,10 @@ import com.example.appointmentbooker.Utils.CustomUserAdapter;
 import com.example.appointmentbooker.Utils.CustomAdminAdapter;
 import com.example.appointmentbooker.Utils.DatabaseHelper;
 import com.example.appointmentbooker.Utils.DateHelper;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +47,9 @@ public class AppointmentsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
+    GoogleSignInAccount account;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
 
     public AppointmentsFragment() {
         // Required empty public constructor
@@ -85,11 +92,13 @@ public class AppointmentsFragment extends Fragment {
         db = new DatabaseHelper(getContext());
         listView = view.findViewById(R.id.listView);
         dataModels = new ArrayList<>();
-
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(getContext(), gso);
+        account = GoogleSignIn.getLastSignedInAccount(getContext());
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String role = sharedPreferences.getString("role", "");
-        if (role.equals("1")) {
+        if (role.equals("1") || account != null) {
             dataModels = (ArrayList<Appointment>) db.listAppointments();
             dialog = new Dialog(getContext());
             dialog.setContentView(R.layout.dialog_confirm);
@@ -125,6 +134,9 @@ public class AppointmentsFragment extends Fragment {
                     endTime.setTime(DateHelper.AddMinutesToDate(DateHelper.StringToDate(date), temp.getPeriod()));
                     SharedPreferences sharedPreferences = getContext().getSharedPreferences(LoginActivity.SHARED_PREFS, Context.MODE_PRIVATE);
                     String email = sharedPreferences.getString("email", "");
+                    if(account!=null){
+                        email = account.getEmail();
+                    }
                     boolean successBook = db.bookAppointment(temp.getId(), email, service_type);
                     if (successBook) {
                         Intent intent = new Intent(Intent.ACTION_INSERT)
@@ -155,7 +167,6 @@ public class AppointmentsFragment extends Fragment {
             listView.setAdapter(adapter);
         } else if (role.equals("2")) {
             dataModels = (ArrayList<Appointment>) db.listAdminAppointments();
-
 
 
             adapter = new CustomAdminAdapter(dataModels, getContext());

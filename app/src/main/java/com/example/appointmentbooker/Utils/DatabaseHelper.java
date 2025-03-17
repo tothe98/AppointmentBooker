@@ -72,6 +72,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean addUser(User user){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("last_name", user.getLastName());
+        values.put("first_name", user.getFirstName());
+        values.put("email", user.getEmail());
+        values.put("password", user.getPassword());
+        values.put("phone", user.getPhone());
+        values.put("role", Role.User.getRole());
+        try {
+            long result = db.insert("users", null, values);
+            return result != -1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public int[] login(LoginUserModel user) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
@@ -130,6 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 u.setLastName(cursor.getString((int) cursor.getColumnIndex("last_name")));
                 u.setPhone(cursor.getString((int) cursor.getColumnIndex("phone")));
                 u.setPassword("");
+
                 return u;
             }
             return u;

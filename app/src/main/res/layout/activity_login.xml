@@ -79,13 +79,31 @@
                     android:inputType="text|textPassword"
                     android:paddingStart="10dp" />
 
-                <Button
-                    android:id="@+id/button"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="100dp"
-                    android:layout_marginEnd="100dp"
-                    android:text="@string/login_btn_title" />
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/googleSigninBtn"
+                        android:layout_width="106dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="50dp"
+                        android:layout_marginEnd="50dp"
+                        android:backgroundTint="@color/lavender"
+                        app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="50dp"
+                        android:text="@string/login_btn_title" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

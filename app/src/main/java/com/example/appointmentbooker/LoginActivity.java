@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,10 +15,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.GetPasswordOption;
+import androidx.credentials.GetPublicKeyCredentialOption;
 
 import com.example.appointmentbooker.Models.LoginUserModel;
 import com.example.appointmentbooker.Models.Role;
+import com.example.appointmentbooker.Models.User;
 import com.example.appointmentbooker.Utils.DatabaseHelper;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,7 +36,11 @@ public class LoginActivity extends AppCompatActivity {
     EditText emailTxt, passwordTxt;
     Button loginBtn;
     TextView forgotTxt, noaccTxt;
+    ImageButton googleSigninBtn;
     DatabaseHelper db;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
+    GoogleSignInAccount account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.button);
         forgotTxt = findViewById(R.id.forgetTxt);
         noaccTxt = findViewById(R.id.noaccTxt);
+        googleSigninBtn = findViewById(R.id.googleSigninBtn);
         db = new DatabaseHelper(this);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -59,16 +75,16 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("isLogged", "true");
                         editor.putString("email", emailTxt.getText().toString());
-                        editor.putString("role", ""+result[1]);
+                        editor.putString("role", "" + result[1]);
                         editor.apply();
-                        if(result[1] == 1){
+                        if (result[1] == 1) {
                             Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             i.addCategory(Intent.CATEGORY_HOME);
                             startActivity(i);
                             finish();
                         }
-                        if(result[1] == 2){
+                        if (result[1] == 2) {
                             Intent i = new Intent(LoginActivity.this, AdminMainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             i.addCategory(Intent.CATEGORY_HOME);
@@ -98,20 +114,79 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Nincs még kész az activity", Toast.LENGTH_SHORT).show();
             }
         });
+
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+        googleSigninBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
     }
 
-    private void isLogged(){
+    private void signInWithGoogle() {
+        Intent i = gsc.getSignInIntent();
+        startActivityForResult(i, 1000);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                task.getResult(ApiException.class);
+                boolean isExists = db.checkUserExists(task.getResult().getEmail());
+                if (!isExists) {
+                    User user = new User();
+                    user.setLastName(task.getResult().getFamilyName());
+                    user.setFirstName(task.getResult().getGivenName());
+                    user.setEmail(task.getResult().getEmail());
+                    user.setPhone("-");
+                    user.setPassword("GOOGLE");
+                    boolean addUser = db.addUser(user);
+                    if (!addUser) {
+                        throw new Exception("Something went wrong");
+                    }
+                }
+                System.out.println(task.getResult().getEmail());
+                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("isLogged", "true");
+                editor.putString("role", "1");
+                editor.apply();
+                Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addCategory(Intent.CATEGORY_HOME);
+                startActivity(i);
+            } catch (ApiException e) {
+                Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void isLogged() {
+        if (account != null) {
+            Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
+            finish();
+        }
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String check = sharedPreferences.getString("isLogged", "");
         String role = sharedPreferences.getString("role", "");
-        if(check.equals("true")){
-            if(role.equals("1")) {
+        if (check.equals("true")) {
+            if (role.equals("1")) {
                 Intent i = new Intent(LoginActivity.this, UserMainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.addCategory(Intent.CATEGORY_HOME);
                 startActivity(i);
                 finish();
-            } else if(role.equals("2")){
+            } else if (role.equals("2")) {
                 Intent i = new Intent(LoginActivity.this, AdminMainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.addCategory(Intent.CATEGORY_HOME);

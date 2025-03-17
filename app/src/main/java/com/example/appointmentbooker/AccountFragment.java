@@ -1,6 +1,7 @@
 package com.example.appointmentbooker;
 
 import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,12 @@ import android.widget.Toast;
 import com.example.appointmentbooker.Models.User;
 import com.example.appointmentbooker.Utils.DatabaseHelper;
 import com.example.appointmentbooker.Utils.ImageHelper;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class AccountFragment extends Fragment {
 
@@ -38,6 +45,9 @@ public class AccountFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     String mParam1, mParam2;
     DatabaseHelper databaseHelper;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
+    GoogleSignInAccount account;
 
     EditText emailText, lNameText, fNameText, phoneText;
     Button saveBtn, logoutBtn;
@@ -51,6 +61,7 @@ public class AccountFragment extends Fragment {
     public AccountFragment() {
 
     }
+
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
         Bundle args = new Bundle();
@@ -87,51 +98,79 @@ public class AccountFragment extends Fragment {
         saveBtn = view.findViewById(R.id.buttonSave);
         logoutBtn = view.findViewById(R.id.buttonLogout);
         databaseHelper = new DatabaseHelper(getContext());
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(getContext(), gso);
+        account = GoogleSignIn.getLastSignedInAccount(getContext());
 
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(LoginActivity.SHARED_PREFS, Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
-
-        User user = databaseHelper.getUserInfo(email);
-        if(!email.isEmpty()){
+        User user = new User();
+                System.out.println(email);
+        user = databaseHelper.getUserInfo(email);
+        if(account!=null){
+            user = databaseHelper.getUserInfo(account.getEmail());
+            emailText.setText(account.getEmail());
+            loadImageFromDatabase(account.getEmail());
+        }
+        if (!email.isEmpty()) {
             emailText.setText(email);
+            loadImageFromDatabase(email);
         }
-        if(!user.getFirstName().isEmpty()){
-            lNameText.setText(user.getLastName());
+
+        lNameText.setText(user.getLastName());
+        phoneText.setText(user.getPhone());
+        if(user.getFirstName() != null || !user.getFirstName().isEmpty()){
             fNameText.setText(user.getFirstName());
-            phoneText.setText(user.getPhone());
+        } else {
+            fNameText.setText("");
         }
-        loadImageFromDatabase(email);
+
+
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("isLogged", "false");
-                editor.putString("email", "");
-                editor.apply();
-                Intent i = new Intent(getContext(), LoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addCategory(Intent.CATEGORY_HOME);
-                startActivity(i);
-                getActivity().finish();
+                if (account != null) {
+                    gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("isLogged", "false");
+                            editor.putString("email", "");
+                            editor.apply();
+                            getActivity().finish();
+                            startActivity(new Intent(getContext(), LoginActivity.class));
+                        }
+                    });
+                } else {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("isLogged", "false");
+                    editor.putString("email", "");
+                    editor.apply();
+                    Intent i = new Intent(getContext(), LoginActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(i);
+                    getActivity().finish();
+                }
             }
         });
 
+        User finalUser = user;
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setFirstName(fNameText.getText().toString());
-                user.setLastName(lNameText.getText().toString());
-                user.setPhone(phoneText.getText().toString());
-                boolean updated = databaseHelper.updateUserInfo(user);
-                if(updated){
+                finalUser.setFirstName(fNameText.getText().toString());
+                finalUser.setLastName(lNameText.getText().toString());
+                finalUser.setPhone(phoneText.getText().toString());
+                boolean updated = databaseHelper.updateUserInfo(finalUser);
+                if (updated) {
                     Toast.makeText(getContext(), R.string.successful_save_userinfo, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), R.string.unsuccessful_save_userinfo, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
 
 
         takePictureLauncher = registerForActivityResult(
@@ -146,7 +185,7 @@ public class AccountFragment extends Fragment {
                                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                                 imageView.setImageBitmap(imageBitmap);
                                 boolean uploaded = databaseHelper.addProfilePicture(email, ImageHelper.convertBitmapToByteArray(imageBitmap));
-                                if(uploaded){
+                                if (uploaded) {
                                     Toast.makeText(getContext(), R.string.successful_upload_picture, Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getContext(), R.string.unsuccessful_upload_picture, Toast.LENGTH_SHORT).show();
@@ -189,6 +228,7 @@ public class AccountFragment extends Fragment {
             takePictureLauncher.launch(takePictureIntent);
         }
     }
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -196,9 +236,6 @@ public class AccountFragment extends Fragment {
             takePicture();
         }
     }
-
-
-
 
 
 }
