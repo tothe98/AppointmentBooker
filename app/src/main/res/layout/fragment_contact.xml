@@ -30,6 +30,7 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:divider="@drawable/divider"
@@ -40,14 +41,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:gravity="center">
+            android:layout_marginEnd="10dp">
 
             <TextView
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:padding="5dp"
                 android:text="@string/contact_phone_title"
                 android:textSize="16sp"
@@ -57,10 +56,10 @@
                 android:id="@+id/phoneTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:padding="5dp"
                 android:text="+36307863234"
                 android:textColor="@color/lavender"
+                android:textIsSelectable="true"
                 android:textSize="16sp" />
         </TableRow>
 
@@ -68,14 +67,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:gravity="center">
+            android:layout_marginEnd="10dp">
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:padding="5dp"
                 android:text="@string/contact_email_title"
                 android:textSize="16sp"
@@ -85,26 +82,24 @@
                 android:id="@+id/emailTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:padding="5dp"
                 android:text="info@cegnev.hu"
                 android:textColor="@color/lavender"
+                android:textIsSelectable="true"
                 android:textSize="16sp" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="120dp"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:gravity="center">
+            android:layout_marginEnd="10dp">
 
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:padding="5dp"
                 android:text="@string/contact_address_title"
                 android:textSize="16sp"
@@ -114,10 +109,12 @@
                 android:id="@+id/addressTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:freezesText="false"
                 android:padding="5dp"
-                android:text="8200 Veszprém, József Attila utca 34/2 "
+                android:text="8200 Veszprém, \nJózsef Attila utca 34/2 "
+                android:textAllCaps="false"
                 android:textColor="@color/lavender"
+                android:textIsSelectable="true"
                 android:textSize="16sp" />
         </TableRow>
 

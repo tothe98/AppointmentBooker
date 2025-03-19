@@ -15,9 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.credentials.CredentialManager;
-import androidx.credentials.GetPasswordOption;
-import androidx.credentials.GetPublicKeyCredentialOption;
 
 import com.example.appointmentbooker.Models.LoginUserModel;
 import com.example.appointmentbooker.Models.Role;
@@ -35,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     EditText emailTxt, passwordTxt;
     Button loginBtn;
-    TextView forgotTxt, noaccTxt;
+    TextView noaccTxt;
     ImageButton googleSigninBtn;
     DatabaseHelper db;
     GoogleSignInOptions gso;
@@ -58,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         emailTxt = findViewById(R.id.emailTxtField);
         passwordTxt = findViewById(R.id.passwordTxtField);
         loginBtn = findViewById(R.id.button);
-        forgotTxt = findViewById(R.id.forgetTxt);
         noaccTxt = findViewById(R.id.noaccTxt);
         googleSigninBtn = findViewById(R.id.googleSigninBtn);
         db = new DatabaseHelper(this);
@@ -105,13 +101,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(i);
-            }
-        });
-
-        forgotTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "Nincs még kész az activity", Toast.LENGTH_SHORT).show();
             }
         });
 

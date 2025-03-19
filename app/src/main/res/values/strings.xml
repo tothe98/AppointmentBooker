@@ -63,5 +63,9 @@
     <string name="deletion_title">Deletion</string>
     <string name="successful_deletion">Successful deletion</string>
     <string name="unsuccessful_deletion">Failed to delete</string>
+    <string name="cancel_title">Cancel</string>
+    <string name="cancel_question">Are you sure to cancel the appointment?</string>
+    <string name="successful_cancel">Successfull cancelation!</string>
+    <string name="unsuccessful_cancel">Faild to cancel</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

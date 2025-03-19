@@ -105,9 +105,9 @@ public class AccountFragment extends Fragment {
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(LoginActivity.SHARED_PREFS, Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
         User user = new User();
-                System.out.println(email);
+        System.out.println(email);
         user = databaseHelper.getUserInfo(email);
-        if(account!=null){
+        if (account != null) {
             user = databaseHelper.getUserInfo(account.getEmail());
             emailText.setText(account.getEmail());
             loadImageFromDatabase(account.getEmail());
@@ -119,12 +119,11 @@ public class AccountFragment extends Fragment {
 
         lNameText.setText(user.getLastName());
         phoneText.setText(user.getPhone());
-        if(user.getFirstName() != null || !user.getFirstName().isEmpty()){
+        if (user.getFirstName() != null || !user.getFirstName().isEmpty()) {
             fNameText.setText(user.getFirstName());
         } else {
             fNameText.setText("");
         }
-
 
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +173,7 @@ public class AccountFragment extends Fragment {
 
 
         takePictureLauncher = registerForActivityResult(
+
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -184,7 +184,13 @@ public class AccountFragment extends Fragment {
                                 Bundle extras = data.getExtras();
                                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                                 imageView.setImageBitmap(imageBitmap);
-                                boolean uploaded = databaseHelper.addProfilePicture(email, ImageHelper.convertBitmapToByteArray(imageBitmap));
+                                boolean uploaded = false;
+                                if (account != null) {
+                                    uploaded = databaseHelper.addProfilePicture(account.getEmail(), ImageHelper.convertBitmapToByteArray(imageBitmap));
+                                } else {
+                                    uploaded = databaseHelper.addProfilePicture(email, ImageHelper.convertBitmapToByteArray(imageBitmap));
+                                }
+
                                 if (uploaded) {
                                     Toast.makeText(getContext(), R.string.successful_upload_picture, Toast.LENGTH_SHORT).show();
                                 } else {

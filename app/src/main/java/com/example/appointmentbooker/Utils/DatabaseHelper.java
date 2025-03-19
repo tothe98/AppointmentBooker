@@ -41,6 +41,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO service_types (name, period) VALUES ('Női hajvágás', 45)");
         db.execSQL("INSERT INTO service_types (name, period) VALUES ('Hajfestés', 60)");
         db.execSQL("INSERT INTO service_types (name, period) VALUES ('Hajmosás', 10)");
+        String adminPassword = BCrypt.withDefaults().hashToString(12, "admin".toCharArray());
+        String userPassword = BCrypt.withDefaults().hashToString(12, "user".toCharArray());
+        db.execSQL("INSERT INTO users (last_name, first_name, email, password, phone, role) VALUES ('Example', 'User', 'user@example.com', '"+userPassword+"','+36809997673', 1)");
+        db.execSQL("INSERT INTO users (last_name, first_name, email, password, phone, role) VALUES ('Example', 'Admin', 'admin@example.com', '"+adminPassword+"','+36809997673', 2)");
     }
 
     @Override
@@ -254,7 +258,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return serviceTypes;
     }
 
-
     public List<Appointment> listAppointments() {
         List<Appointment> appointments = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -290,7 +293,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT * FROM appointments", new String[]{});
+            cursor = db.rawQuery("SELECT * FROM appointments ORDER BY datetime", new String[]{});
             if (cursor != null) {
                 if (cursor.moveToFirst()) do {
                     Appointment appointment = new Appointment();
@@ -316,13 +319,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return appointments;
     }
 
-    public List<Appointment> filterAppointment(String col, String data) {
-        List<Appointment> appointments = new ArrayList<>();
+    public ArrayList<Appointment> filterByEmailAppointment(String email) {
+        ArrayList<Appointment> appointments = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
         db.beginTransaction();
         try {
-            cursor = db.rawQuery("SELECT * FROM appointments WHERE ? = ?", new String[]{col, data});
+            cursor = db.rawQuery("SELECT * FROM appointments WHERE booked_email = ? ORDER BY datetime desc", new String[]{email});
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
@@ -332,7 +335,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         appointment.setPeriod(cursor.getInt((int) cursor.getColumnIndex("period")));
                         appointment.setBookedEmail(cursor.getString((int) cursor.getColumnIndex("booked_email")));
                         appointment.setServiceType(cursor.getString((int) cursor.getColumnIndex("service_type")));
-                        appointments.add(appointment);
                         appointments.add(appointment);
                     } while (cursor.moveToNext());
                 }
@@ -346,6 +348,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return appointments;
     }
 
+    public boolean removeBooking(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("booked_email", "");
+        values.put("service_type", "");
+        long result = db.update("appointments", values, "id=?", new String[]{(String.valueOf(id))});
+        return result != -1;
+    }
     public boolean deleteAppointment(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete("appointments", "id=?", new String[]{String.valueOf(id)});
